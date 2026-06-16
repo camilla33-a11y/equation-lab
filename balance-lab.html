@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>등식 저울 실험실</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background: #f5f9ff;
+    padding: 20px;
+  }
+
+  h1 { color: #24527a; }
+
+  .equation {
+    font-size: 32px;
+    margin: 20px;
+    font-weight: bold;
+  }
+
+  .scale-area {
+    margin: 30px auto;
+    width: 360px;
+    height: 220px;
+    position: relative;
+  }
+
+  .beam {
+    width: 300px;
+    height: 12px;
+    background: #555;
+    position: absolute;
+    top: 80px;
+    left: 30px;
+    transform-origin: center;
+    transition: transform 0.7s ease;
+    border-radius: 8px;
+  }
+
+  .center {
+    width: 16px;
+    height: 120px;
+    background: #555;
+    position: absolute;
+    top: 85px;
+    left: 172px;
+  }
+
+  .base {
+    width: 160px;
+    height: 18px;
+    background: #555;
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    border-radius: 8px;
+  }
+
+  .pan {
+    width: 100px;
+    height: 35px;
+    background: #ffd966;
+    border: 3px solid #c49a00;
+    border-radius: 0 0 50px 50px;
+    position: absolute;
+    top: 115px;
+    transition: top 0.7s ease;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 35px;
+  }
+
+  .left-pan { left: 0; }
+  .right-pan { right: 0; }
+
+  .buttons button {
+    font-size: 18px;
+    margin: 6px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #4f81bd;
+    color: white;
+    cursor: pointer;
+  }
+
+  .buttons button:hover {
+    background: #2f5d8c;
+  }
+
+  .danger {
+    background: #d9534f !important;
+  }
+
+  .message {
+    font-size: 22px;
+    margin-top: 20px;
+    font-weight: bold;
+    min-height: 35px;
+  }
+
+  .success { color: #1b8a3a; }
+  .fail { color: #d9534f; }
+
+  .stamp {
+    font-size: 40px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>⚖️ 등식 저울 실험실</h1>
+
+<p>양쪽에 같은 일을 하면 저울은 어떻게 될까요?</p>
+
+<div class="equation" id="equation">x + 3 = 7</div>
+
+<div class="scale-area">
+  <div class="beam" id="beam"></div>
+  <div class="center"></div>
+  <div class="base"></div>
+  <div class="pan left-pan" id="leftPan">7</div>
+  <div class="pan right-pan" id="rightPan">7</div>
+</div>
+
+<div class="buttons">
+  <button onclick="sameAdd(1)">양변에 +1</button>
+  <button onclick="sameAdd(2)">양변에 +2</button>
+  <button onclick="sameSub(1)">양변에 -1</button>
+  <button onclick="sameMul(2)">양변에 ×2</button>
+  <button onclick="sameDiv(2)">양변에 ÷2</button>
+  <br>
+  <button class="danger" onclick="leftOnlyAdd(1)">왼쪽에만 +1</button>
+  <button class="danger" onclick="rightOnlyAdd(1)">오른쪽에만 +1</button>
+  <button onclick="resetGame()">처음으로</button>
+</div>
+
+<div class="message" id="message"></div>
+<div class="stamp" id="stamp"></div>
+
+<script>
+  let left = 7;
+  let right = 7;
+
+  function updateScale(msg, success) {
+    document.getElementById("leftPan").textContent = left;
+    document.getElementById("rightPan").textContent = right;
+    document.getElementById("equation").textContent = left + " = " + right;
+
+    const beam = document.getElementById("beam");
+    const leftPan = document.getElementById("leftPan");
+    const rightPan = document.getElementById("rightPan");
+    const message = document.getElementById("message");
+    const stamp = document.getElementById("stamp");
+
+    if (left === right) {
+      beam.style.transform = "rotate(0deg)";
+      leftPan.style.top = "115px";
+      rightPan.style.top = "115px";
+      message.textContent = msg || "균형 유지! 등식이 성립합니다.";
+      message.className = "message success";
+      stamp.textContent = "⭐";
+    } else if (left > right) {
+      beam.style.transform = "rotate(-12deg)";
+      leftPan.style.top = "135px";
+      rightPan.style.top = "95px";
+      message.textContent = msg || "앗! 왼쪽이 더 무거워졌어요.";
+      message.className = "message fail";
+      stamp.textContent = "💥";
+    } else {
+      beam.style.transform = "rotate(12deg)";
+      leftPan.style.top = "95px";
+      rightPan.style.top = "135px";
+      message.textContent = msg || "앗! 오른쪽이 더 무거워졌어요.";
+      message.className = "message fail";
+      stamp.textContent = "💥";
+    }
+  }
+
+  function sameAdd(n) {
+    left += n;
+    right += n;
+    updateScale("양변에 같은 수를 더했기 때문에 등식이 유지됩니다!", true);
+  }
+
+  function sameSub(n) {
+    left -= n;
+    right -= n;
+    updateScale("양변에서 같은 수를 빼도 등식이 유지됩니다!", true);
+  }
+
+  function sameMul(n) {
+    left *= n;
+    right *= n;
+    updateScale("양변에 같은 수를 곱해도 등식이 유지됩니다!", true);
+  }
+
+  function sameDiv(n) {
+    left = left / n;
+    right = right / n;
+    updateScale("양변을 같은 수로 나누어도 등식이 유지됩니다!", true);
+  }
+
+  function leftOnlyAdd(n) {
+    left += n;
+    updateScale("한쪽에만 더하면 등식이 깨집니다!", false);
+  }
+
+  function rightOnlyAdd(n) {
+    right += n;
+    updateScale("한쪽에만 더하면 등식이 깨집니다!", false);
+  }
+
+  function resetGame() {
+    left = 7;
+    right = 7;
+    updateScale("처음 상태로 돌아왔어요. 저울이 다시 균형을 잡았습니다!", true);
+  }
+
+  updateScale("처음에는 양쪽이 같아서 균형입니다!", true);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>방정식 탐험대</title>
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(#eaf6ff,#ffffff);
+  text-align:center;
+  color:#24364b;
+}
+.container{
+  max-width:780px;
+  margin:auto;
+  padding:16px;
+}
+h1{color:#24527a;}
+.card{
+  background:white;
+  border-radius:20px;
+  padding:16px;
+  margin:14px 0;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+}
+.level{
+  font-size:22px;
+  font-weight:bold;
+  color:#1d6fa5;
+}
+.equation{
+  font-size:34px;
+  font-weight:bold;
+  margin:12px;
+}
+.scale{
+  position:relative;
+  height:260px;
+  max-width:480px;
+  margin:auto;
+}
+.beam{
+  position:absolute;
+  top:85px;
+  left:50%;
+  width:360px;
+  height:14px;
+  margin-left:-180px;
+  background:#555;
+  border-radius:10px;
+  transform-origin:center;
+  transition:.5s;
+}
+.pillar{
+  position:absolute;
+  top:95px;
+  left:50%;
+  width:16px;
+  height:130px;
+  margin-left:-8px;
+  background:#555;
+}
+.base{
+  position:absolute;
+  bottom:5px;
+  left:50%;
+  width:180px;
+  height:20px;
+  margin-left:-90px;
+  background:#555;
+  border-radius:10px;
+}
+.pan{
+  position:absolute;
+  top:130px;
+  width:150px;
+  min-height:80px;
+  background:#ffd966;
+  border:4px solid #c49a00;
+  border-radius:0 0 70px 70px;
+  transition:.5s;
+  padding:8px;
+}
+.left-pan{left:0;}
+.right-pan{right:0;}
+.item{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  width:36px;
+  height:36px;
+  margin:3px;
+  border-radius:50%;
+  background:#4f81bd;
+  color:white;
+  font-weight:bold;
+}
+.box{
+  background:#8e44ad;
+  border-radius:10px;
+  width:44px;
+}
+.message{
+  min-height:48px;
+  font-size:20px;
+  font-weight:bold;
+  margin-top:10px;
+}
+.success{color:#16833a;}
+.fail{color:#d33;}
+.info{color:#24527a;}
+button{
+  font-size:17px;
+  padding:10px 15px;
+  margin:5px;
+  border:0;
+  border-radius:12px;
+  background:#4f81bd;
+  color:white;
+}
+button:hover{background:#2f5d8c;}
+.green{background:#2e9d57;}
+.red{background:#d9534f;}
+.purple{background:#8e44ad;}
+.small{
+  font-size:14px;
+  color:#666;
+}
+.choice button{
+  background:#2e9d57;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>📦 방정식 탐험대</h1>
+
+<div class="card">
+  <div class="level" id="levelText">Level 1</div>
+  <div class="equation" id="equationText"></div>
+  <p class="small" id="guideText"></p>
+</div>
+
+<div class="card">
+  <div class="scale">
+    <div class="beam" id="beam"></div>
+    <div class="pillar"></div>
+    <div class="base"></div>
+
+    <div class="pan left-pan" id="leftPan">
+      <b>왼쪽</b>
+      <div id="leftItems"></div>
+    </div>
+
+    <div class="pan right-pan" id="rightPan">
+      <b>오른쪽</b>
+      <div id="rightItems"></div>
+    </div>
+  </div>
+
+  <div class="message info" id="message"></div>
+</div>
+
+<div class="card" id="buttonArea"></div>
+
+</div>
+
+<script>
+const levels = [
+  {
+    title:"Level 1. 등호는 '같다'",
+    type:"judge",
+    left:["●","●","●"],
+    right:["●","●","●"],
+    equation:"3 = 3",
+    guide:"양쪽의 개수가 같은지 살펴보세요.",
+    answer:true
+  },
+  {
+    title:"Level 2. 같을까, 다를까?",
+    type:"judge",
+    left:["●","●","●"],
+    right:["●","●","●","●"],
+    equation:"3 = 4",
+    guide:"등호는 계산 결과가 아니라 '양쪽이 같다'는 뜻입니다.",
+    answer:false
+  },
+  {
+    title:"Level 3. 빈칸 찾기",
+    type:"blank",
+    left:["□","●","●"],
+    right:["●","●","●","●","●"],
+    equation:"□ + 2 = 5",
+    guide:"□ 안에는 몇 개가 들어가야 저울이 균형일까요?",
+    answer:3
+  },
+  {
+    title:"Level 4. 미지수 상자",
+    type:"remove",
+    left:["📦","●","●"],
+    right:["●","●","●","●","●"],
+    equation:"📦 + 2 = 5",
+    guide:"양쪽에서 같은 추 2개를 제거해 보세요.",
+    removeCount:2,
+    result:"📦 = 3",
+    answer:3
+  },
+  {
+    title:"Level 5. x로 바꾸기",
+    type:"remove",
+    left:["x","●","●"],
+    right:["●","●","●","●","●"],
+    equation:"x + 2 = 5",
+    guide:"이제 📦 대신 x를 사용합니다. 양쪽에서 2를 빼면?",
+    removeCount:2,
+    result:"x = 3",
+    answer:3
+  },
+  {
+    title:"Level 6. 상자가 2개라면?",
+    type:"divide",
+    left:["📦","📦"],
+    right:["●","●","●","●","●","●"],
+    equation:"2📦 = 6",
+    guide:"상자 2개가 6개와 같다면 상자 1개는 몇 개일까요?",
+    groups:2,
+    answer:3
+  },
+  {
+    title:"Level 7. 일차방정식",
+    type:"final",
+    left:["x","x","●"],
+    right:["●","●","●","●","●","●","●"],
+    equation:"2x + 1 = 7",
+    guide:"양쪽에서 1을 빼고, 남은 6개를 x 2개에 나누어 보세요.",
+    answer:3
+  }
+];
+
+let current = 0;
+let left = [];
+let right = [];
+
+function loadLevel(){
+  const lv = levels[current];
+  left = [...lv.left];
+  right = [...lv.right];
+
+  document.getElementById("levelText").textContent = lv.title;
+  document.getElementById("equationText").textContent = lv.equation;
+  document.getElementById("guideText").textContent = lv.guide;
+  document.getElementById("message").textContent = "문제를 해결해 봅시다.";
+  document.getElementById("message").className = "message info";
+
+  render();
+  makeButtons();
+}
+
+function render(){
+  drawItems("leftItems", left);
+  drawItems("rightItems", right);
+
+  const L = countValue(left);
+  const R = countValue(right);
+
+  const beam = document.getElementById("beam");
+  const leftPan = document.getElementById("leftPan");
+  const rightPan = document.getElementById("rightPan");
+
+  if(L === R){
+    beam.style.transform = "rotate(0deg)";
+    leftPan.style.top = "130px";
+    rightPan.style.top = "130px";
+  }else if(L > R){
+    beam.style.transform = "rotate(-12deg)";
+    leftPan.style.top = "155px";
+    rightPan.style.top = "105px";
+  }else{
+    beam.style.transform = "rotate(12deg)";
+    leftPan.style.top = "105px";
+    rightPan.style.top = "155px";
+  }
+}
+
+function countValue(arr){
+  let sum = 0;
+  arr.forEach(v=>{
+    if(v === "●") sum += 1;
+    if(v === "□") sum += 3;
+    if(v === "📦") sum += 3;
+    if(v === "x") sum += 3;
+  });
+  return sum;
+}
+
+function drawItems(id, arr){
+  const box = document.getElementById(id);
+  box.innerHTML = "";
+  arr.forEach(v=>{
+    const d = document.createElement("span");
+    d.className = "item";
+    if(v === "□" || v === "📦" || v === "x") d.classList.add("box");
+    d.textContent = v;
+    box.appendChild(d);
+  });
+}
+
+function makeButtons(){
+  const area = document.getElementById("buttonArea");
+  const lv = levels[current];
+  area.innerHTML = "";
+
+  if(lv.type === "judge"){
+    area.innerHTML = `
+      <div class="choice">
+        <button onclick="judge(true)">같다</button>
+        <button onclick="judge(false)">다르다</button>
+      </div>
+    `;
+  }
+
+  if(lv.type === "blank"){
+    area.innerHTML = `
+      <p>□ 안에 들어갈 수를 고르세요.</p>
+      <button onclick="checkNumber(2)">2</button>
+      <button onclick="checkNumber(3)">3</button>
+      <button onclick="checkNumber(4)">4</button>
+    `;
+  }
+
+  if(lv.type === "remove"){
+    area.innerHTML = `
+      <button class="purple" onclick="removeSame()">양쪽에서 ● ${lv.removeCount}개 제거</button>
+      <button class="green" onclick="checkRemove()">확인하기</button>
+    `;
+  }
+
+  if(lv.type === "divide"){
+    area.innerHTML = `
+      <button class="purple" onclick="divideBoxes()">오른쪽 추를 2묶음으로 나누기</button>
+      <button class="green" onclick="showAnswer()">상자 1개 값 확인</button>
+    `;
+  }
+
+  if(lv.type === "final"){
+    area.innerHTML = `
+      <button class="purple" onclick="finalStep1()">양쪽에서 ● 1개 제거</button>
+      <button class="purple" onclick="finalStep2()">남은 추를 x 2개에 나누기</button>
+      <button class="green" onclick="showAnswer()">정답 확인</button>
+    `;
+  }
+
+  area.innerHTML += `<br><button onclick="nextLevel()">다음 단계</button>
+  <button class="red" onclick="loadLevel()">다시 하기</button>`;
+}
+
+function judge(choice){
+  const lv = levels[current];
+  if(choice === lv.answer){
+    success("맞아요! 등호는 양쪽이 같다는 뜻입니다.");
+  }else{
+    fail("다시 살펴보세요. 양쪽의 개수가 같은가요?");
+  }
+}
+
+function checkNumber(n){
+  const lv = levels[current];
+  if(n === lv.answer){
+    success("정답입니다! □ 안에는 3이 들어갑니다.");
+  }else{
+    fail("아직 균형이 맞지 않아요.");
+  }
+}
+
+function removeSame(){
+  const lv = levels[current];
+  for(let i=0;i<lv.removeCount;i++){
+    removeOneDot(left);
+    removeOneDot(right);
+  }
+  render();
+  success("양쪽에서 같은 수만큼 제거했습니다. 균형은 유지됩니다.");
+}
+
+function removeOneDot(arr){
+  const idx = arr.indexOf("●");
+  if(idx >= 0) arr.splice(idx,1);
+}
+
+function checkRemove(){
+  const lv = levels[current];
+  document.getElementById("equationText").textContent = lv.result;
+  success("좋아요! 모르는 값만 남았습니다. 그래서 답은 " + lv.result + " 입니다.");
+}
+
+function divideBoxes(){
+  document.getElementById("equationText").textContent = "📦 = 3";
+  left = ["📦"];
+  right = ["●","●","●"];
+  render();
+  success("6개를 2묶음으로 나누면 한 묶음은 3개입니다.");
+}
+
+function finalStep1(){
+  removeOneDot(left);
+  removeOneDot(right);
+  document.getElementById("equationText").textContent = "2x = 6";
+  render();
+  success("양쪽에서 1을 뺐습니다. 이제 2x = 6 입니다.");
+}
+
+function finalStep2(){
+  left = ["x"];
+  right = ["●","●","●"];
+  document.getElementById("equationText").textContent = "x = 3";
+  render();
+  success("6개를 x 2개에 나누면 x 하나는 3입니다.");
+}
+
+function showAnswer(){
+  const lv = levels[current];
+  success("정답입니다. x 또는 상자 하나의 값은 " + lv.answer + "입니다.");
+}
+
+function success(msg){
+  const m = document.getElementById("message");
+  m.textContent = "🎉 " + msg;
+  m.className = "message success";
+}
+
+function fail(msg){
+  const m = document.getElementById("message");
+  m.textContent = "💥 " + msg;
+  m.className = "message fail";
+}
+
+function nextLevel(){
+  current++;
+  if(current >= levels.length){
+    document.getElementById("levelText").textContent = "완료!";
+    document.getElementById("equationText").textContent = "🏆 방정식 탐험 성공!";
+    document.getElementById("guideText").textContent = "";
+    document.getElementById("buttonArea").innerHTML = `<button onclick="restart()">처음부터 다시</button>`;
+    success("등호, 미지수, 방정식의 뜻을 모두 살펴보았습니다.");
+    return;
+  }
+  loadLevel();
+}
+
+function restart(){
+  current = 0;
+  loadLevel();
+}
+
+loadLevel();
+</script>
+</body>
+</html>

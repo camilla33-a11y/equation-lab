@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>방정식 실험실</title>
+<style>
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, 'Noto Sans KR', sans-serif;
+    background:linear-gradient(135deg,#eaf6ff,#fff7df);
+    color:#24364b;
+  }
+  .wrap{
+    max-width:980px;
+    margin:auto;
+    padding:22px;
+  }
+  header{
+    text-align:center;
+    background:white;
+    border-radius:28px;
+    padding:28px 18px;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
+    margin-bottom:18px;
+  }
+  h1{
+    margin:0 0 10px;
+    font-size:38px;
+    color:#24527a;
+  }
+  .subtitle{
+    font-size:20px;
+    line-height:1.6;
+  }
+  .mission{
+    margin-top:16px;
+    display:inline-block;
+    background:#fff2b8;
+    border:2px dashed #d6a600;
+    border-radius:18px;
+    padding:12px 16px;
+    font-size:18px;
+    font-weight:bold;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    margin-top:18px;
+  }
+  .card{
+    background:white;
+    border-radius:24px;
+    padding:22px;
+    box-shadow:0 5px 16px rgba(0,0,0,.12);
+    min-height:235px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    border-top:8px solid #4f81bd;
+  }
+  .step{
+    font-size:16px;
+    font-weight:bold;
+    color:#1d6fa5;
+    margin-bottom:8px;
+  }
+  .title{
+    font-size:25px;
+    font-weight:bold;
+    margin-bottom:10px;
+  }
+  .desc{
+    font-size:17px;
+    line-height:1.55;
+    color:#3f4f63;
+  }
+  .tip{
+    font-size:14px;
+    color:#6b7280;
+    margin-top:10px;
+  }
+  a.btn{
+    display:block;
+    text-decoration:none;
+    color:white;
+    background:#4f81bd;
+    border-radius:16px;
+    padding:13px 14px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    margin-top:16px;
+  }
+  a.btn:hover{background:#2f5d8c;}
+  .card:nth-child(1){border-top-color:#8e44ad;}
+  .card:nth-child(1) a.btn{background:#8e44ad;}
+  .card:nth-child(1) a.btn:hover{background:#6f3488;}
+  .card:nth-child(2){border-top-color:#2e9d57;}
+  .card:nth-child(2) a.btn{background:#2e9d57;}
+  .card:nth-child(2) a.btn:hover{background:#207640;}
+  .card:nth-child(3){border-top-color:#f0a500;}
+  .card:nth-child(3) a.btn{background:#f0a500;}
+  .card:nth-child(3) a.btn:hover{background:#c88400;}
+  .card:nth-child(4){border-top-color:#d9534f;}
+  .card:nth-child(4) a.btn{background:#d9534f;}
+  .card:nth-child(4) a.btn:hover{background:#b33c39;}
+  .guide{
+    background:white;
+    border-radius:24px;
+    padding:20px;
+    margin-top:18px;
+    box-shadow:0 5px 16px rgba(0,0,0,.12);
+  }
+  .guide h2{margin:0 0 10px;color:#24527a;}
+  .guide ol{
+    text-align:left;
+    font-size:17px;
+    line-height:1.8;
+    margin:0;
+    padding-left:26px;
+  }
+  footer{
+    text-align:center;
+    color:#607087;
+    padding:18px;
+    font-size:14px;
+  }
+  @media(max-width:720px){
+    .grid{grid-template-columns:1fr;}
+    h1{font-size:31px;}
+    .subtitle{font-size:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>⚖️ 방정식 실험실</h1>
+    <div class="subtitle">
+      등호의 뜻부터 미지수, 등식의 성질, 방정식 풀이까지<br>
+      직접 눌러 보고 움직여 보며 이해하는 수학 실험실입니다.
+    </div>
+    <div class="mission">오늘의 탐구 질문: 양변에 같은 일을 하면 왜 등식은 유지될까요?</div>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <div>
+        <div class="step">STEP 1</div>
+        <div class="title">📦 방정식 탐험대</div>
+        <div class="desc">등호는 ‘같다’는 뜻임을 확인하고, 빈칸·상자·x가 어떤 의미인지 단계적으로 탐험합니다.</div>
+        <div class="tip">추천: 처음 배우는 학생에게 가장 먼저 제시</div>
+      </div>
+      <a class="btn" href="equation-explorer.html">탐험 시작하기</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <div class="step">STEP 2</div>
+        <div class="title">⚖️ 등식 저울 실험</div>
+        <div class="desc">양변에 같은 수를 더하고, 빼고, 곱하고, 나누면 저울이 어떻게 되는지 실험합니다.</div>
+        <div class="tip">핵심: 등식의 성질 직관적으로 이해</div>
+      </div>
+      <a class="btn" href="balance-lab.html">실험 시작하기</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <div class="step">STEP 3</div>
+        <div class="title">🎮 등식 저울게임</div>
+        <div class="desc">레벨별 방정식을 풀며 양변에 같은 연산을 적용하는 과정을 연습합니다.</div>
+        <div class="tip">추천: 수업 후 개인 연습용</div>
+      </div>
+      <a class="btn" href="balance-game.html">게임 시작하기</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <div class="step">STEP 4</div>
+        <div class="title">🧲 드래그 저울게임</div>
+        <div class="desc">추와 x를 직접 끌어다 놓으며 식을 만들고, 양쪽이 같은지 확인합니다.</div>
+        <div class="tip">추천: 짝 활동·모둠 활동용</div>
+      </div>
+      <a class="btn" href="drag-balance.html">드래그 실험하기</a>
+    </div>
+  </section>
+
+  <section class="guide">
+    <h2>📚 수업 활용 순서</h2>
+    <ol>
+      <li>STEP 1에서 등호와 미지수의 뜻을 확인합니다.</li>
+      <li>STEP 2에서 양변에 같은 연산을 하면 균형이 유지됨을 실험합니다.</li>
+      <li>STEP 3에서 실제 방정식 풀이 과정을 연습합니다.</li>
+      <li>STEP 4에서 학생이 직접 식을 만들고 저울의 균형을 탐구합니다.</li>
+    </ol>
+  </section>
+
+  <footer>
+    중학교 1학년 수학 · 문자와 식 · 등식의 성질과 일차방정식
+  </footer>
+</div>
+</body>
+</html>

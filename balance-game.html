@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>등식의 성질 저울게임</title>
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(#eaf6ff,#ffffff);
+  text-align:center;
+  color:#24364b;
+}
+.container{
+  max-width:720px;
+  margin:auto;
+  padding:18px;
+}
+h1{
+  color:#24527a;
+  font-size:30px;
+}
+.card{
+  background:white;
+  border-radius:20px;
+  padding:18px;
+  margin:14px 0;
+  box-shadow:0 4px 14px rgba(0,0,0,0.12);
+}
+.level{
+  font-size:22px;
+  font-weight:bold;
+  color:#1d6fa5;
+}
+.equation{
+  font-size:34px;
+  font-weight:bold;
+  margin:12px;
+}
+.mission{
+  font-size:20px;
+  line-height:1.5;
+}
+.scale{
+  position:relative;
+  height:240px;
+  margin:20px auto;
+  max-width:430px;
+}
+.beam{
+  position:absolute;
+  top:80px;
+  left:50%;
+  width:330px;
+  height:14px;
+  margin-left:-165px;
+  background:#555;
+  border-radius:10px;
+  transform-origin:center;
+  transition:transform .6s ease;
+}
+.pillar{
+  position:absolute;
+  top:88px;
+  left:50%;
+  width:16px;
+  height:125px;
+  margin-left:-8px;
+  background:#555;
+}
+.base{
+  position:absolute;
+  bottom:10px;
+  left:50%;
+  width:180px;
+  height:20px;
+  margin-left:-90px;
+  background:#555;
+  border-radius:10px;
+}
+.pan{
+  position:absolute;
+  top:120px;
+  width:120px;
+  height:48px;
+  background:#ffd966;
+  border:4px solid #c49a00;
+  border-radius:0 0 60px 60px;
+  font-size:24px;
+  font-weight:bold;
+  line-height:48px;
+  transition:top .6s ease;
+}
+.left-pan{left:15px;}
+.right-pan{right:15px;}
+.buttons button{
+  margin:6px;
+  padding:12px 16px;
+  border:0;
+  border-radius:12px;
+  background:#4f81bd;
+  color:white;
+  font-size:17px;
+  cursor:pointer;
+}
+.buttons button:hover{
+  background:#2f5d8c;
+}
+.danger{
+  background:#d9534f!important;
+}
+.green{
+  background:#2e9d57!important;
+}
+.message{
+  min-height:45px;
+  font-size:21px;
+  font-weight:bold;
+  margin-top:12px;
+}
+.success{color:#16833a;}
+.fail{color:#d33;}
+.stars{
+  font-size:34px;
+  min-height:42px;
+}
+.answer-area input{
+  font-size:22px;
+  padding:10px;
+  width:90px;
+  text-align:center;
+  border-radius:10px;
+  border:2px solid #aaa;
+}
+.small{
+  font-size:15px;
+  color:#666;
+}
+.pop{
+  animation:pop .5s ease;
+}
+@keyframes pop{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.18);}
+  100%{transform:scale(1);}
+}
+.shake{
+  animation:shake .4s;
+}
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-8px);}
+  50%{transform:translateX(8px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>⚖️ 등식의 성질 저울게임</h1>
+
+  <div class="card">
+    <div class="level" id="levelText">Level 1</div>
+    <div class="mission" id="missionText"></div>
+    <div class="equation" id="equationText"></div>
+    <p class="small">양변에 같은 일을 하면 저울의 균형이 유지됩니다.</p>
+  </div>
+
+  <div class="card">
+    <div class="scale" id="scaleBox">
+      <div class="beam" id="beam"></div>
+      <div class="pillar"></div>
+      <div class="base"></div>
+      <div class="pan left-pan" id="leftPan"></div>
+      <div class="pan right-pan" id="rightPan"></div>
+    </div>
+
+    <div class="message" id="message"></div>
+    <div class="stars" id="stars"></div>
+  </div>
+
+  <div class="card buttons">
+    <button onclick="sameAdd(1)">양변 +1</button>
+    <button onclick="sameSub(1)">양변 -1</button>
+    <button onclick="sameMul(2)">양변 ×2</button>
+    <button onclick="sameDiv(2)">양변 ÷2</button>
+    <button onclick="sameDiv(3)">양변 ÷3</button>
+    <button onclick="sameDiv(4)">양변 ÷4</button>
+    <button onclick="sameDiv(5)">양변 ÷5</button>
+    <br>
+    <button class="danger" onclick="leftOnlyAdd(1)">왼쪽만 +1</button>
+    <button class="danger" onclick="rightOnlyAdd(1)">오른쪽만 +1</button>
+    <button onclick="resetLevel()">현재 문제 다시</button>
+  </div>
+
+  <div class="card answer-area">
+    <p>🎯 x의 값을 찾았다면 입력하세요.</p>
+    <input type="number" id="answerInput">
+    <button class="green" onclick="checkAnswer()">정답 확인</button>
+    <button onclick="nextLevel()">다음 문제</button>
+  </div>
+</div>
+
+<script>
+const levels = [
+  {eq:"x + 2 = 5", answer:3, left:5, right:5},
+  {eq:"x - 3 = 7", answer:10, left:7, right:7},
+  {eq:"2x + 1 = 9", answer:4, left:9, right:9},
+  {eq:"3x - 2 = 13", answer:5, left:13, right:13},
+  {eq:"5x + 4 = 24", answer:4, left:24, right:24},
+  {eq:"4(x + 2) = 20", answer:3, left:20, right:20}
+];
+
+let current = 0;
+let left = 0;
+let right = 0;
+let starCount = 0;
+
+function loadLevel(){
+  const lv = levels[current];
+  left = lv.left;
+  right = lv.right;
+
+  document.getElementById("levelText").textContent = "Level " + (current+1);
+  document.getElementById("missionText").textContent = "미션: " + lv.eq + " 에서 x의 값을 찾아라!";
+  document.getElementById("equationText").textContent = lv.eq;
+  document.getElementById("answerInput").value = "";
+  updateScale("처음에는 등식이 성립하여 저울이 균형입니다.");
+}
+
+function updateScale(msg){
+  document.getElementById("leftPan").textContent = left;
+  document.getElementById("rightPan").textContent = right;
+
+  const beam = document.getElementById("beam");
+  const leftPan = document.getElementById("leftPan");
+  const rightPan = document.getElementById("rightPan");
+  const message = document.getElementById("message");
+  const scaleBox = document.getElementById("scaleBox");
+
+  scaleBox.classList.remove("shake");
+
+  if(left === right){
+    beam.style.transform = "rotate(0deg)";
+    leftPan.style.top = "120px";
+    rightPan.style.top = "120px";
+    message.textContent = "🎉 " + msg;
+    message.className = "message success";
+  }else if(left > right){
+    beam.style.transform = "rotate(-13deg)";
+    leftPan.style.top = "145px";
+    rightPan.style.top = "95px";
+    message.textContent = "💥 균형 붕괴! 왼쪽이 더 무거워졌어요.";
+    message.className = "message fail";
+    scaleBox.classList.add("shake");
+  }else{
+    beam.style.transform = "rotate(13deg)";
+    leftPan.style.top = "95px";
+    rightPan.style.top = "145px";
+    message.textContent = "💥 균형 붕괴! 오른쪽이 더 무거워졌어요.";
+    message.className = "message fail";
+    scaleBox.classList.add("shake");
+  }
+}
+
+function sameAdd(n){
+  left += n;
+  right += n;
+  updateScale("양변에 같은 수를 더하면 등식이 유지됩니다!");
+}
+
+function sameSub(n){
+  left -= n;
+  right -= n;
+  updateScale("양변에서 같은 수를 빼도 등식이 유지됩니다!");
+}
+
+function sameMul(n){
+  left *= n;
+  right *= n;
+  updateScale("양변에 같은 수를 곱해도 등식이 유지됩니다!");
+}
+
+function sameDiv(n){
+  left = left / n;
+  right = right / n;
+  updateScale("양변을 같은 수로 나누어도 등식이 유지됩니다!");
+}
+
+function leftOnlyAdd(n){
+  left += n;
+  updateScale();
+}
+
+function rightOnlyAdd(n){
+  right += n;
+  updateScale();
+}
+
+function checkAnswer(){
+  const input = Number(document.getElementById("answerInput").value);
+  const answer = levels[current].answer;
+  const message = document.getElementById("message");
+
+  if(input === answer){
+    starCount++;
+    document.getElementById("stars").textContent = "⭐".repeat(starCount);
+    message.textContent = "정답입니다! x = " + answer + " 입니다.";
+    message.className = "message success pop";
+  }else{
+    message.textContent = "다시 생각해 보세요. 등식의 성질을 이용해 x를 찾아봅시다.";
+    message.className = "message fail shake";
+  }
+}
+
+function nextLevel(){
+  current++;
+  if(current >= levels.length){
+    document.getElementById("levelText").textContent = "완료!";
+    document.getElementById("missionText").textContent = "모든 미션을 해결했습니다.";
+    document.getElementById("equationText").textContent = "🎊 등식 마스터 🎊";
+    document.getElementById("message").textContent = "축하합니다! 등식의 성질을 잘 이해했어요.";
+    document.getElementById("stars").textContent = "🏆 " + "⭐".repeat(starCount);
+    return;
+  }
+  loadLevel();
+}
+
+function resetLevel(){
+  loadLevel();
+}
+
+loadLevel();
+</script>
+</body>
+</html>
